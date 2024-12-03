@@ -8,6 +8,7 @@ import {
   logout,
   newUser,
   searchUser,
+  sendFriendRequest,
 } from "../controllers/user.controller.js";
 import { singleAvatar } from "../middlewares/multer.js";
 import { isAuthenticated } from "../middlewares/auth.js";
@@ -38,10 +39,10 @@ userRouter.get("/logout", logout);
 userRouter.get("/search", searchUser);
 
 userRouter.put(
-  "sendrequest",
+  "/sendrequest",
   sendRequestValidator(),
   validateHandler,
-  acceptFriendRequest
+  sendFriendRequest
 );
 userRouter.put(
   "/acceptrequest",

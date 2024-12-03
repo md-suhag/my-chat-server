@@ -1,6 +1,6 @@
 import mongoose, { model, Schema, Types } from "mongoose";
 
-const messageSchema = new Schema(
+const requestSchema = new Schema(
   {
     Status: {
       type: String,
@@ -24,4 +24,4 @@ const messageSchema = new Schema(
   }
 );
 
-export const Request = mongoose.Request || model("Request", userSchema);
+export const Request = mongoose.Request || model("Request", requestSchema);

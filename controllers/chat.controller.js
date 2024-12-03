@@ -4,7 +4,8 @@ import {
   NEW_MESSAGE_ALERT,
   REFETCH_CHATS,
 } from "../constants/events.js";
-import { deletFilesFromCloudinary, getOtherMember } from "../lib/helper.js";
+import { getOtherMember } from "../lib/helper.js";
+import { deletFilesFromCloudinary } from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.model.js";
 import { User } from "../models/user.model.js";
