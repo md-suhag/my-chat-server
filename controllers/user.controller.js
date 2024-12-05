@@ -124,7 +124,7 @@ const sendFriendRequest = TryCatch(async (req, res, next) => {
 
 const acceptFriendRequest = TryCatch(async (req, res, next) => {
   const { requestId, accept } = req.body;
-  const request = await Request.findById(requestId)
+  const request = await Request.findById({ _id: requestId })
     .populate("sender", "name")
     .populate("receiver", "name");
 
@@ -158,7 +158,7 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: "Friend Request Accepted",
-    sender: Request.sender._id,
+    sender: request.sender._id,
   });
 });
 
