@@ -30,7 +30,7 @@ import {
   START_TYPING,
   STOP_TYPING,
 } from "./constants/events.js";
-import { getSokets } from "./lib/helper.js";
+import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.model.js";
 import { socketAuthenticatior } from "./middlewares/auth.js";
 
@@ -59,6 +59,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, { cors: corsOptions });
 
+app.set("io", io);
+
 // parser
 app.use(express.json());
 app.use(cookieParser());
@@ -82,10 +84,6 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   const user = socket.user;
 
-  // const user = {
-  //   _id: "dkfj",
-  //   name: "mustakim",
-  // };
   userSocketIDs.set(user._id.toString(), socket.id);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
@@ -106,7 +104,7 @@ io.on("connection", (socket) => {
       chat: chatId,
     };
 
-    const membersSocket = getSokets(members);
+    const membersSocket = getSockets(members);
     io.to(membersSocket).emit(NEW_MESSAGE, {
       chatId,
       message: messageForRealTime,
@@ -121,18 +119,18 @@ io.on("connection", (socket) => {
   });
 
   socket.on(START_TYPING, ({ members, chatId }) => {
-    const membersSockets = getSokets(members);
+    const membersSockets = getSockets(members);
     socket.to(membersSockets).emit(START_TYPING, { chatId });
   });
   socket.on(STOP_TYPING, ({ members, chatId }) => {
-    const membersSockets = getSokets(members);
+    const membersSockets = getSockets(members);
     socket.to(membersSockets).emit(STOP_TYPING, { chatId });
   });
 
   socket.on(CHAT_JOINED, ({ userId, members }) => {
     onlineUsers.add(userId.toString());
 
-    const membersSocket = getSokets(members);
+    const membersSocket = getSockets(members);
     io.to(membersSocket).emit(ONLINE_USERS, Array.from(onlineUsers));
   });
 

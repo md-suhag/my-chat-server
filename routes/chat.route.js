@@ -29,13 +29,18 @@ const chatRouter = express.Router();
 // After here user must be logged in to access the routes
 chatRouter.use(isAuthenticated);
 
-chatRouter.post("/new", newGroupValidator, validateHandler, newGroupChat);
+chatRouter.post("/new", newGroupValidator(), validateHandler, newGroupChat);
 chatRouter.get("/my", getMyChats);
 chatRouter.get("/my/groups", getMyGroups);
-chatRouter.put("/addmembers", addMemberValidator, validateHandler, addMembers);
+chatRouter.put(
+  "/addmembers",
+  addMemberValidator(),
+  validateHandler,
+  addMembers
+);
 chatRouter.put(
   "/removemember",
-  removeMemberValidator,
+  removeMemberValidator(),
   validateHandler,
   removeMembers
 );

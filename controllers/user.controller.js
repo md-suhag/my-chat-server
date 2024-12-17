@@ -14,7 +14,7 @@ import { Chat } from "../models/chat.model.js";
 import { getOtherMember } from "../lib/helper.js";
 
 // Create a new user and save it to the database and save tooken in cookie
-const newUser = TryCatch(async (req, res) => {
+const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
 
   const file = req.file;
@@ -183,7 +183,7 @@ const getMyNotifications = TryCatch(async (req, res) => {
   });
 });
 
-const getMyFriends = TryCatch(async (req, request) => {
+const getMyFriends = TryCatch(async (req, res) => {
   const chatId = req.query.chatId;
 
   const chats = await Chat.find({
@@ -193,7 +193,13 @@ const getMyFriends = TryCatch(async (req, request) => {
 
   const friends = chats.map(({ members }) => {
     const otherUser = getOtherMember(members, req.user);
-
+    if (otherUser === undefined) {
+      return {
+        _id: members[0]._id,
+        name: members[0].name,
+        avatar: members[0].avatar?.url,
+      };
+    }
     return {
       _id: otherUser._id,
       name: otherUser.name,

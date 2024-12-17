@@ -24,4 +24,5 @@ const requestSchema = new Schema(
   }
 );
 
-export const Request = mongoose.Request || model("Request", requestSchema);
+export const Request =
+  mongoose.models.Request || model("Request", requestSchema);

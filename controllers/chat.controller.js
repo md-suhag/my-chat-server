@@ -5,7 +5,10 @@ import {
   REFETCH_CHATS,
 } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
-import { deletFilesFromCloudinary } from "../utils/features.js";
+import {
+  deletFilesFromCloudinary,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.model.js";
 import { User } from "../models/user.model.js";
@@ -15,12 +18,14 @@ import { Message } from "./../models/message.model.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
   const { name, members } = req.body;
+
   if (members.length < 2) {
     return next(
       new ErrorHandler("Group chat must have at least 3 members", 400)
     );
   }
   const allMembers = [...members, req.user];
+
   await Chat.create({
     name,
     groupChat: true,
@@ -44,13 +49,24 @@ const getMyChats = TryCatch(async (req, res, next) => {
 
   const transformedChats = chats.map(({ _id, name, members, groupChat }) => {
     const otherMember = getOtherMember(members, req.user);
+
+    if (otherMember === undefined) {
+      return {
+        _id,
+        groupChat,
+        avatar: [members[0]?.avatar?.url],
+        name: `${name.split("-")[0]} (You)`,
+        members,
+      };
+    }
+
     return {
       _id,
       groupChat,
       avatar: groupChat
         ? members.slice(0, 3).map(({ avatar }) => avatar.url)
-        : [otherMember.avatar.url],
-      name: groupChat ? name : otherMember.name,
+        : [otherMember?.avatar?.url],
+      name: groupChat ? name : otherMember?.name,
       members: members.reduce((prev, curr) => {
         if (curr._id.toString() !== req.user.toString()) {
           prev.push(curr._id);
@@ -230,7 +246,8 @@ const sendAttachments = TryCatch(async (req, res, next) => {
 
   if (!chat) return next(new ErrorHandler("Chat not found", 404));
 
-  const attachments = [];
+  //  Upload files here
+  const attachments = await uploadFilesToCloudinary(files);
 
   const messageForDB = {
     content: "",

@@ -3,6 +3,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.model.js";
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
+import { cookieOptions } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 import jwt from "jsonwebtoken";
 
@@ -30,7 +31,7 @@ const adminLogin = TryCatch(async (req, res, next) => {
 const adminLogout = TryCatch(async (req, res, next) => {
   return res
     .status(200)
-    .cookie("chattu-admin-token", "", {
+    .cookie("mychat-admin-token", "", {
       ...cookieOptions,
       maxAge: 0,
     })
