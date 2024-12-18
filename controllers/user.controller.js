@@ -15,7 +15,9 @@ import { getOtherMember } from "../lib/helper.js";
 
 // Create a new user and save it to the database and save tooken in cookie
 const newUser = TryCatch(async (req, res, next) => {
-  const { name, username, password, bio } = req.body;
+  let { name, username, password, bio } = req.body;
+
+  username = username.trim();
 
   const existingUser = await User.findOne({ username });
   if (existingUser) {
@@ -46,7 +48,9 @@ const newUser = TryCatch(async (req, res, next) => {
 });
 // Login user and save token in cookie
 const login = TryCatch(async (req, res, next) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
+
+  username = username.trim();
 
   const user = await User.findOne({ username }).select("+password");
 
