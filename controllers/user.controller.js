@@ -17,6 +17,13 @@ import { getOtherMember } from "../lib/helper.js";
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
 
+  const existingUser = await User.findOne({ username });
+  if (existingUser) {
+    return next(
+      new ErrorHandler("Username is already taken. Try another name.")
+    );
+  }
+
   const file = req.file;
   if (!file) return next(new ErrorHandler("Please Upload Avatar"));
 
