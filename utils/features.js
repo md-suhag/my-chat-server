@@ -12,9 +12,10 @@ const cookieOptions = {
 
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-
+  user.password = undefined;
   return res.status(code).cookie("mychat-token", token, cookieOptions).json({
     success: true,
+    user,
     message,
   });
 };
